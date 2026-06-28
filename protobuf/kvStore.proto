@@ -1,0 +1,25 @@
+syntax = "proto3";
+option go_package = ".";
+
+package kvStore;
+
+service kvstore {
+  rpc kv_get (opKeyReq) returns (opGetRes) {}
+  rpc kv_set (setReq) returns (opRes) {}
+  rpc kv_del (opKeyReq) returns (opRes) {}
+}
+
+message opKeyReq {
+  string key = 1;
+}
+
+message setReq {
+  string key = 1;
+  string value = 2;
+}
+
+message opRes {}
+
+message opGetRes {
+  string value = 1;
+}
