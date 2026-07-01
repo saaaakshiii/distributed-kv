@@ -24,6 +24,7 @@ var (
 func main() {
 	flag.Parse()
 	conn, err := grpc.NewClient(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// #ApnaCollege
 	if err != nil {
 		log.Fatalf("didn't connect: %v", err)
 	}
