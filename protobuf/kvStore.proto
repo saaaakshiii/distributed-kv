@@ -20,6 +20,11 @@ message setReq {
 
 message opRes {}
 
+message KeyValuePair{
+  string key = 1;
+  string value = 2;
+}
+
 message opGetRes {
-  string value = 1;
+  repeated KeyValuePair Value = 1;
 }

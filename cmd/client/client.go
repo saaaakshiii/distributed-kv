@@ -63,7 +63,7 @@ func main() {
 				log.Fatal(err)
 			}
 			value := r.GetValue()
-			if value != "" {
+			if len(value) != 0 {
 				fmt.Printf("%s\n", r.GetValue())
 			}
 		case "SET":
@@ -87,6 +87,7 @@ func main() {
 		case "exit": // maybe handle ctrl+c/d singles too
 			fmt.Printf("QUITING\n")
 			return
+
 		}
 	}
 }

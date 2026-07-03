@@ -39,15 +39,49 @@ type server struct {
 // https://gobyexample.com/interfaces
 // TODO: add RWMutex locks for sync? also related read
 // https://oneuptime.com/blog/post/2026-01-23-go-mutex/view
+
+// > GET ispark
+// ispark=abc
+// ispark_port_num=8000
+// ispark_mongodb_uri=dbkhd25361
+// ispark_api_key=dhdhiuwhq
 func (s *server) KvGet(_ context.Context, in *pb.OpKeyReq) (*pb.OpGetRes, error) {
-	key := in.GetKey()
-	log.Printf("log: GET %v", key)
-	value, ok := s.store.Get(key)
-	if value == "" {
-		value = "(nil)"
+	key_ip := in.GetKey()
+	log.Printf("log: GET %v", key_ip)
+	result := []*pb.KeyValuePair{}
+	// value, ok := s.store.Get(key)
+	kv := s.store
+	kv.Scan(func(key, value string) bool {
+		// result = append(result, key)
+		// return true
+		i := 0 // 1st char of input key
+
+		for i < len(key_ip) && i < len(key) {
+			if key_ip[i] == key[i] {
+				i++
+			} else if key_ip[i] != key[i] {
+				break
+			}
+		}
+		if i == len(key_ip) { // all characters matched
+			value, ok := kv.Get(key)
+			if !ok {
+				return false
+			}
+			result = append(result, &pb.KeyValuePair{Key: key, Value: value})
+		}
+
+		return true
+	})
+	// if value == "" {
+	// 	value = "(nil)"
+	// }
+	// log.Printf("store: GET %v = %v : %v", key, value, ok)
+	// return &pb.OpGetRes{Value: value}, nil
+	if len(result) == 0 {
+		result = nil
 	}
-	log.Printf("store: GET %v = %v : %v", key, value, ok)
-	return &pb.OpGetRes{Value: value}, nil
+	return &pb.OpGetRes{Value: result}, nil
 }
 
 func (s *server) KvSet(_ context.Context, in *pb.SetReq) (*pb.OpRes, error) {

@@ -153,16 +153,68 @@ func (*OpRes) Descriptor() ([]byte, []int) {
 	return file_kvStore_proto_rawDescGZIP(), []int{2}
 }
 
+type KeyValuePair struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *KeyValuePair) Reset() {
+	*x = KeyValuePair{}
+	mi := &file_kvStore_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *KeyValuePair) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*KeyValuePair) ProtoMessage() {}
+
+func (x *KeyValuePair) ProtoReflect() protoreflect.Message {
+	mi := &file_kvStore_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use KeyValuePair.ProtoReflect.Descriptor instead.
+func (*KeyValuePair) Descriptor() ([]byte, []int) {
+	return file_kvStore_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *KeyValuePair) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *KeyValuePair) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
 type OpGetRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value         []*KeyValuePair        `protobuf:"bytes,1,rep,name=Value,proto3" json:"Value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *OpGetRes) Reset() {
 	*x = OpGetRes{}
-	mi := &file_kvStore_proto_msgTypes[3]
+	mi := &file_kvStore_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -174,7 +226,7 @@ func (x *OpGetRes) String() string {
 func (*OpGetRes) ProtoMessage() {}
 
 func (x *OpGetRes) ProtoReflect() protoreflect.Message {
-	mi := &file_kvStore_proto_msgTypes[3]
+	mi := &file_kvStore_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -187,14 +239,14 @@ func (x *OpGetRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpGetRes.ProtoReflect.Descriptor instead.
 func (*OpGetRes) Descriptor() ([]byte, []int) {
-	return file_kvStore_proto_rawDescGZIP(), []int{3}
+	return file_kvStore_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *OpGetRes) GetValue() string {
+func (x *OpGetRes) GetValue() []*KeyValuePair {
 	if x != nil {
 		return x.Value
 	}
-	return ""
+	return nil
 }
 
 var File_kvStore_proto protoreflect.FileDescriptor
@@ -207,9 +259,12 @@ const file_kvStore_proto_rawDesc = "" +
 	"\x06setReq\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"\a\n" +
-	"\x05opRes\" \n" +
-	"\bopGetRes\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\tR\x05value2\x97\x01\n" +
+	"\x05opRes\"6\n" +
+	"\fKeyValuePair\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"7\n" +
+	"\bopGetRes\x12+\n" +
+	"\x05Value\x18\x01 \x03(\v2\x15.kvStore.KeyValuePairR\x05Value2\x97\x01\n" +
 	"\akvstore\x120\n" +
 	"\x06kv_get\x12\x11.kvStore.opKeyReq\x1a\x11.kvStore.opGetRes\"\x00\x12+\n" +
 	"\x06kv_set\x12\x0f.kvStore.setReq\x1a\x0e.kvStore.opRes\"\x00\x12-\n" +
@@ -227,25 +282,27 @@ func file_kvStore_proto_rawDescGZIP() []byte {
 	return file_kvStore_proto_rawDescData
 }
 
-var file_kvStore_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_kvStore_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_kvStore_proto_goTypes = []any{
-	(*OpKeyReq)(nil), // 0: kvStore.opKeyReq
-	(*SetReq)(nil),   // 1: kvStore.setReq
-	(*OpRes)(nil),    // 2: kvStore.opRes
-	(*OpGetRes)(nil), // 3: kvStore.opGetRes
+	(*OpKeyReq)(nil),     // 0: kvStore.opKeyReq
+	(*SetReq)(nil),       // 1: kvStore.setReq
+	(*OpRes)(nil),        // 2: kvStore.opRes
+	(*KeyValuePair)(nil), // 3: kvStore.KeyValuePair
+	(*OpGetRes)(nil),     // 4: kvStore.opGetRes
 }
 var file_kvStore_proto_depIdxs = []int32{
-	0, // 0: kvStore.kvstore.kv_get:input_type -> kvStore.opKeyReq
-	1, // 1: kvStore.kvstore.kv_set:input_type -> kvStore.setReq
-	0, // 2: kvStore.kvstore.kv_del:input_type -> kvStore.opKeyReq
-	3, // 3: kvStore.kvstore.kv_get:output_type -> kvStore.opGetRes
-	2, // 4: kvStore.kvstore.kv_set:output_type -> kvStore.opRes
-	2, // 5: kvStore.kvstore.kv_del:output_type -> kvStore.opRes
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: kvStore.opGetRes.Value:type_name -> kvStore.KeyValuePair
+	0, // 1: kvStore.kvstore.kv_get:input_type -> kvStore.opKeyReq
+	1, // 2: kvStore.kvstore.kv_set:input_type -> kvStore.setReq
+	0, // 3: kvStore.kvstore.kv_del:input_type -> kvStore.opKeyReq
+	4, // 4: kvStore.kvstore.kv_get:output_type -> kvStore.opGetRes
+	2, // 5: kvStore.kvstore.kv_set:output_type -> kvStore.opRes
+	2, // 6: kvStore.kvstore.kv_del:output_type -> kvStore.opRes
+	4, // [4:7] is the sub-list for method output_type
+	1, // [1:4] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_kvStore_proto_init() }
@@ -259,7 +316,7 @@ func file_kvStore_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_kvStore_proto_rawDesc), len(file_kvStore_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
