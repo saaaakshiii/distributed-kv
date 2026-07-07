@@ -24,7 +24,6 @@ var (
 func main() {
 	flag.Parse()
 	conn, err := grpc.NewClient(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	// #ApnaCollege
 	if err != nil {
 		log.Fatalf("didn't connect: %v", err)
 	}
@@ -62,9 +61,8 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			value := r.GetValue()
-			if len(value) != 0 {
-				fmt.Printf("%s\n", r.GetValue())
+			if r != nil {
+				fmt.Printf("%s\n", r.GetKeyValuePairs()) // returns an array of type KeyValuePairs
 			}
 		case "SET":
 			if len(cmd) != 3 {
@@ -87,7 +85,6 @@ func main() {
 		case "exit": // maybe handle ctrl+c/d singles too
 			fmt.Printf("QUITING\n")
 			return
-
 		}
 	}
 }

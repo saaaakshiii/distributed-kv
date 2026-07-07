@@ -49,12 +49,9 @@ func (s *server) KvGet(_ context.Context, in *pb.OpKeyReq) (*pb.OpGetRes, error)
 	key_ip := in.GetKey()
 	log.Printf("log: GET %v", key_ip)
 	result := []*pb.KeyValuePair{}
-	// value, ok := s.store.Get(key)
 	kv := s.store
 	kv.Scan(func(key, value string) bool {
-		// result = append(result, key)
-		// return true
-		i := 0 // 1st char of input key
+		i := 0 // 1st character
 
 		for i < len(key_ip) && i < len(key) {
 			if key_ip[i] == key[i] {
@@ -73,15 +70,10 @@ func (s *server) KvGet(_ context.Context, in *pb.OpKeyReq) (*pb.OpGetRes, error)
 
 		return true
 	})
-	// if value == "" {
-	// 	value = "(nil)"
-	// }
-	// log.Printf("store: GET %v = %v : %v", key, value, ok)
-	// return &pb.OpGetRes{Value: value}, nil
 	if len(result) == 0 {
 		result = nil
 	}
-	return &pb.OpGetRes{Value: result}, nil
+	return &pb.OpGetRes{KeyValuePairs: result}, nil
 }
 
 func (s *server) KvSet(_ context.Context, in *pb.SetReq) (*pb.OpRes, error) {

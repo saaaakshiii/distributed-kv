@@ -7,11 +7,12 @@
 package __
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -207,7 +208,7 @@ func (x *KeyValuePair) GetValue() string {
 
 type OpGetRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         []*KeyValuePair        `protobuf:"bytes,1,rep,name=Value,proto3" json:"Value,omitempty"`
+	KeyValuePairs []*KeyValuePair        `protobuf:"bytes,1,rep,name=key_value_pairs,json=keyValuePairs,proto3" json:"key_value_pairs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -242,9 +243,9 @@ func (*OpGetRes) Descriptor() ([]byte, []int) {
 	return file_kvStore_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *OpGetRes) GetValue() []*KeyValuePair {
+func (x *OpGetRes) GetKeyValuePairs() []*KeyValuePair {
 	if x != nil {
-		return x.Value
+		return x.KeyValuePairs
 	}
 	return nil
 }
@@ -262,9 +263,9 @@ const file_kvStore_proto_rawDesc = "" +
 	"\x05opRes\"6\n" +
 	"\fKeyValuePair\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"7\n" +
-	"\bopGetRes\x12+\n" +
-	"\x05Value\x18\x01 \x03(\v2\x15.kvStore.KeyValuePairR\x05Value2\x97\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"I\n" +
+	"\bopGetRes\x12=\n" +
+	"\x0fkey_value_pairs\x18\x01 \x03(\v2\x15.kvStore.KeyValuePairR\rkeyValuePairs2\x97\x01\n" +
 	"\akvstore\x120\n" +
 	"\x06kv_get\x12\x11.kvStore.opKeyReq\x1a\x11.kvStore.opGetRes\"\x00\x12+\n" +
 	"\x06kv_set\x12\x0f.kvStore.setReq\x1a\x0e.kvStore.opRes\"\x00\x12-\n" +
@@ -291,7 +292,7 @@ var file_kvStore_proto_goTypes = []any{
 	(*OpGetRes)(nil),     // 4: kvStore.opGetRes
 }
 var file_kvStore_proto_depIdxs = []int32{
-	3, // 0: kvStore.opGetRes.Value:type_name -> kvStore.KeyValuePair
+	3, // 0: kvStore.opGetRes.key_value_pairs:type_name -> kvStore.KeyValuePair
 	0, // 1: kvStore.kvstore.kv_get:input_type -> kvStore.opKeyReq
 	1, // 2: kvStore.kvstore.kv_set:input_type -> kvStore.setReq
 	0, // 3: kvStore.kvstore.kv_del:input_type -> kvStore.opKeyReq
