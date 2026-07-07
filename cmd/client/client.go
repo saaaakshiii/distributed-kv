@@ -61,9 +61,8 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			value := r.GetValue()
-			if value != "" {
-				fmt.Printf("%s\n", r.GetValue())
+			if r != nil {
+				fmt.Printf("%s\n", r.GetKeyValuePairs()) // returns an array of type KeyValuePairs
 			}
 		case "SET":
 			if len(cmd) != 3 {
