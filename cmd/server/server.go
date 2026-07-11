@@ -6,15 +6,17 @@
 package main
 
 import (
+	"cmp"
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net"
 
 	pb "github.com/iips-oss/distributed-kv/protobuf"
-	"github.com/tidwall/btree"
 	"google.golang.org/grpc"
+	"modernc.org/b/v2"
 )
 
 // INFO: https://en.wikipedia.org/wiki/Copy-on-write
@@ -32,7 +34,14 @@ var (
 // its just that examples recommends to keep data structs as members
 type server struct {
 	pb.UnimplementedKvstoreServer
-	store btree.Map[string, string]
+	store *b.Tree[string, string]
+}
+
+// Creates a new B+ tree, intializing the store
+func NewServer() *server {
+	return &server{
+		store: b.TreeNew[string, string](cmp.Compare),
+	}
 }
 
 // these are methods to server struct which is how it implements the KvstoreServer interface
@@ -46,11 +55,19 @@ type server struct {
 // ispark_mongodb_uri=dbkhd25361
 // ispark_api_key=dhdhiuwhq
 func (s *server) KvGet(_ context.Context, in *pb.OpKeyReq) (*pb.OpGetRes, error) {
-	key_ip := in.GetKey()
+	key_ip := in.GetKey() // from client
 	log.Printf("log: GET %v", key_ip)
 	result := []*pb.KeyValuePair{}
-	kv := s.store
-	kv.Scan(func(key, value string) bool {
+	e, err := s.store.SeekFirst() // first element
+	if err != nil {
+		return nil, err
+	}
+
+	for {
+		key, _, err := e.Next() // will return the current item and move to the next
+		if err != nil {         // if end of file reached, break
+			break
+		}
 		i := 0 // 1st character
 
 		for i < len(key_ip) && i < len(key) {
@@ -61,15 +78,14 @@ func (s *server) KvGet(_ context.Context, in *pb.OpKeyReq) (*pb.OpGetRes, error)
 			}
 		}
 		if i == len(key_ip) { // all characters matched
-			value, ok := kv.Get(key)
+			value, ok := s.store.Get(key)
 			if !ok {
-				return false
+				return nil, err
 			}
 			result = append(result, &pb.KeyValuePair{Key: key, Value: value})
 		}
 
-		return true
-	})
+	}
 	if len(result) == 0 {
 		result = nil
 	}
@@ -77,8 +93,8 @@ func (s *server) KvGet(_ context.Context, in *pb.OpKeyReq) (*pb.OpGetRes, error)
 }
 
 func (s *server) KvSet(_ context.Context, in *pb.SetReq) (*pb.OpRes, error) {
-	key := in.GetKey()
-	value := in.GetValue()
+	key := in.GetKey()     // from client
+	value := in.GetValue() // from client
 	log.Printf("log: SET %v %v", key, value)
 	s.store.Set(key, value)
 	set_value, _ := s.store.Get(key)
@@ -100,17 +116,31 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterKvstoreServer(s, &server{})
+	// srv := NewServer()
+	srv := &server{
+		store: b.TreeNew[string, string](cmp.Compare),
+	}
+	pb.RegisterKvstoreServer(s, srv)
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }
 
-// Iterate over btree and print it in order
-func printMap(kv btree.Map[string, string]) {
-	kv.Scan(func(key string, value string) bool {
-		fmt.Printf("%s %s\n", key, value)
-		return true
-	})
+func printMap(kv *b.Tree[string, string]) {
+	e, err := kv.SeekFirst()
+	if err != nil {
+		return
+	}
+	for {
+		key, val, err := e.Next() // will return the current item and move to the next
+		if err == io.EOF {        // if end of file reached, break
+			break
+		}
+		if err != nil {
+			return
+		}
+
+		fmt.Printf("%s %s\n", key, val)
+	}
 }
